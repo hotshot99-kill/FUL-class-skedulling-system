@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Student Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-dark: #7c3aed;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --surface: #0f0f23;
+            --surface-light: #1a1a2e;
+            --surface-card: #16213e;
+            --text: #ffffff;
+            --text-muted: #a1a1aa;
+            --border: #374151;
+        }
+
+        body {
+            box-sizing: border-box;
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .gradient-bg {
+            background: var(--gradient-1);
+        }
+
+        .settings-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .settings-card:hover {
+            border-color: var(--primary);
+        }
+
+        .form-input {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .nav-tab {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+        }
+
+        .nav-tab:hover {
+            background: var(--surface-light);
+            color: var(--text);
+        }
+
+        .nav-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.selected {
+            border-color: white;
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            display: flex;
+            items-center: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .avatar-upload {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--primary);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 3px solid var(--surface-card);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="gradient-bg shadow-2xl">
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold text-white mb-2">Settings</h1>
+                <p class="text-blue-100 text-lg">Customize your student portal experience</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- Navigation Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="settings-card rounded-xl p-6 sticky top-8">
+                    <nav class="space-y-2">
+                        <button onclick="showTab('profile')" class="nav-tab active w-full text-left px-4 py-3 rounded-lg font-medium">
+                            👤 Profile
+                        </button>
+                        <button onclick="showTab('appearance')" class="nav-tab w-full text-left px-4 py-3 rounded-lg font-medium">
+                            🎨 Appearance
+                        </button>
+                        <button onclick="showTab('notifications')" class="nav-tab w-full text-left px-4 py-3 rounded-lg font-medium">
+                            🔔 Notifications
+                        </button>
+                        <button onclick="showTab('security')" class="nav-tab w-full text-left px-4 py-3 rounded-lg font-medium">
+                            🔒 Security
+                        </button>
+                        <button onclick="showTab('privacy')" class="nav-tab w-full text-left px-4 py-3 rounded-lg font-medium">
+                            🛡️ Privacy
+                        </button>
+
+                        <button onclick="showTab('language')" class="nav-tab w-full text-left px-4 py-3 rounded-lg font-medium">
+                            🌍 Language & Region
+                        </button>
+                        <button onclick="showTab('data')" class="nav-tab w-full text-left px-4 py-3 rounded-lg font-medium">
+                            💾 Data Management
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Settings Content -->
+            <div class="lg:col-span-3">
+                <!-- Profile Settings -->
+                <div id="profile-tab" class="settings-tab">
+                    <div class="settings-card rounded-xl p-6 mb-6">
+                        <h2 class="text-2xl font-semibold text-white mb-6">Profile Information</h2>
+                        
+                        <!-- Profile Picture -->
+                        <div class="flex items-center gap-6 mb-8">
+                            <div class="profile-avatar">
+                                <span id="avatarInitials">JS</span>
+                                <div class="avatar-upload">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-medium text-white mb-2">Profile Picture</h3>
+                                <p class="text-sm" style="color: var(--text-muted);">Upload a new profile picture or use your initials</p>
+                                <div class="flex gap-3 mt-3">
+                                    <button onclick="uploadPhoto()" style="background: var(--primary);" class="hover:opacity-90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
+                                        Upload Photo
+                                    </button>
+                                    <button onclick="removePhoto()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Personal Information -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">First Name</label>
+                                <input type="text" id="firstName" value="John" class="form-input w-full px-4 py-3 rounded-lg focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">Last Name</label>
+                                <input type="text" id="lastName" value="Smith" class="form-input w-full px-4 py-3 rounded-lg focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">Email Address</label>
+                                <input type="email" id="email" value="john.smith@university.edu" class="form-input w-full px-4 py-3 rounded-lg focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">Phone Number</label>
+                                <input type="tel" id="phone" value="+1 (555) 123-4567" class="form-input w-full px-4 py-3 rounded-lg focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">Student ID</label>
+                                <input type="text" id="studentId" value="STU2024001" readonly class="form-input w-full px-4 py-3 rounded-lg focus:outline-none bg-gray-700">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">Major</label>
+                                <select id="major" class="form-input w-full px-4 py-3 rounded-lg focus:outline-none">
+                                    <option value="computer-science">Computer Science</option>
+                                    <option value="mathematics">Mathematics</option>
+                                    <option value="physics">Physics</option>
+                                    <option value="engineering">Engineering</option>
+                                    <option value="business">Business</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-white mb-2">Bio</label>
+                            <textarea id="bio" rows="4" placeholder="Tell us about yourself..." class="form-input w-full px-4 py-3 rounded-lg focus:outline-none">Computer Science student passionate about AI and machine learning. Love solving complex problems and building innovative solutions.</textarea>
+                        </div>
+
+                        <div class="flex justify-end mt-6">
+                            <button onclick="saveProfile()" style="background: var(--success);" class="hover:opacity-90 text-white px-6 py-3 rounded-lg font-medium transition-all">
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appearance Settings -->
+                <div id="appearance-tab" class="settings-tab hidden">
+                    <div class="settings-card rounded-xl p-6 mb-6">
+                        <h2 class="text-2xl font-semibold text-white mb-6">Appearance</h2>
+                        
+                        <!-- Theme Selection -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-medium text-white mb-4">Theme</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="settings-card rounded-lg p-4 cursor-pointer border-2 border-purple-500">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded bg-gray-900"></div>
+                                        <div>
+                                            <h4 class="font-medium text-white">Dark Theme</h4>
+                                            <p class="text-sm" style="color: var(--text-muted);">Current theme</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="settings-card rounded-lg p-4 cursor-pointer">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded bg-white"></div>
+                                        <div>
+                                            <h4 class="font-medium text-white">Light Theme</h4>
+                                            <p class="text-sm" style="color: var(--text-muted);">Coming soon</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Accent Colors -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-medium text-white mb-4">Accent Color</h3>
+                            <div class="flex gap-4 flex-wrap">
+                                <div class="color-option selected" style="background: #8b5cf6;" onclick="selectColor('#8b5cf6')"></div>
+                                <div class="color-option" style="background: #06b6d4;" onclick="selectColor('#06b6d4')"></div>
+                                <div class="color-option" style="background: #10b981;" onclick="selectColor('#10b981')"></div>
+                                <div class="color-option" style="background: #f59e0b;" onclick="selectColor('#f59e0b')"></div>
+                                <div class="color-option" style="background: #ef4444;" onclick="selectColor('#ef4444')"></div>
+                                <div class="color-option" style="background: #8b5a2b;" onclick="selectColor('#8b5a2b')"></div>
+                            </div>
+                        </div>
+
+                        <!-- Display Options -->
+                        <div class="space-y-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-medium text-white">Compact Mode</h4>
+                                    <p class="text-sm" style="color: var(--text-muted);">Reduce spacing and padding</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="compactMode">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-medium text-white">Animations</h4>
+                                    <p class="text-sm" style="color: var(--text-muted);">Enable smooth transitions and animations</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="animations" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-medium text-white">High Contrast</h4>
+                                    <p class="text-sm" style="color: var(--text-muted);">Improve accessibility with higher contrast</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="highContrast">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notifications Settings -->
+                <div id="notifications-tab" class="settings-tab hidden">
+                    <div class="settings-card rounded-xl p-6 mb-6">
+                        <h2 class="text-2xl font-semibold text-white mb-6">Notification Preferences</h2>
+                        
+                        <!-- Email Notifications -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-medium text-white mb-4">Email Notifications</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-medium text-white">Grade Updates</h4>
+                                        <p class="text-sm" style="color: var(--text-muted);">Get notified when grades are posted</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-medium text-white">Assignment Reminders</h4>
+                                        <p class="text-sm" style="color: var(--text-muted);">Reminders for upcoming deadlines</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-medium text-white">Course Announcements</h4>
+                                        <p class="text-sm" style="color: var(--text-muted);">Important updates from instructors</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Push Notifications -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-medium text-white mb-4">Push Notifications</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-medium text-white">Instant Messages</h4>
+                                        <p class="text-sm" style="color: var(--text-muted);">Messages from classmates and instructors</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-medium text-white">Schedule Changes</h4>
+                                        <p class="text-sm" style="color: var(--text-muted);">Class cancellations and room changes</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notification Timing -->
+                        <div>
+                            <h3 class="text-lg font-medium text-white mb-4">Notification Timing</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-white mb-2">Quiet Hours Start</label>
+                                    <input type="time" value="22:00" class="form-input w-full px-4 py-3 rounded-lg focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-white mb-2">Quiet Hours End</label>
+                                    <input type="time" value="08:00" class="form-input w-full px-4 py-3 rounded-lg focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div id="security-tab" class="settings-tab hidden">
+                    <div class="settings-card rounded-xl p-6 mb-6">
+                        <h2 class="text-2xl font-semibold text-white mb-6">Security Settings</h2>
+                        
+                        <!-- Password Change -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-medium text-white mb-4">Change Password</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-white mb-2">Current Password</label>
+                                    <input type="password" class="form-input w-full px-4 py-3 rounded-lg focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-white mb-2">New Password</label>
+                                    <input type="password" class="form-input w-full px-4 py-3 rounded-lg focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-white mb-2">Confirm New Password</label>
+                                    <input type="password" class="form-input w-full px-4 py-3 rounded-lg focus:outline-none">
+                                </div>
+                                <button style="background: var(--primary);" class="hover:opacity-90 text-white px-6 py-3 rounded-lg font-medium transition-all">
+                                    Update Password
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Two-Factor Authentication -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-medium text-white mb-4">Two-Factor Authentication</h3>
+                            <div class="settings-card rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-medium text-white">Enable 2FA</h4>
+                                        <p class="text-sm" style="color: var(--text-muted);">Add an extra layer of security to your account</p>
+                                    </div>
+                                    <button style="background: var(--success);" class="hover:opacity-90 text-white px-4 py-2 rounded-lg font-medium transition-all">
+                                        Enable
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Sessions -->
+                        <div>
+                            <h3 class="text-lg font-medium text-white mb-4">Active Sessions</h3>
+                            <div class="space-y-3">
+                                <div class="settings-card rounded-lg p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h4 class="font-medium text-white">Current Session</h4>
+                                            <p class="text-sm" style="color: var(--text-muted);">Chrome on Windows • Last active: Now</p>
+                                        </div>
+                                        <span class="text-sm px-3 py-1 rounded-full" style="background: var(--success); color: white;">Active</span>
+                                    </div>
+                                </div>
+                                <div class="settings-card rounded-lg p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h4 class="font-medium text-white">Mobile Session</h4>
+                                            <p class="text-sm" style="color: var(--text-muted);">Safari on iPhone • Last active: 2 hours ago</p>
+                                        </div>
+                                        <button style="background: var(--error);" class="hover:opacity-90 text-white px-3 py-1 rounded text-sm font-medium transition-all">
+                                            Revoke
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Privacy Settings -->
+                <div id="privacy-tab" class="settings-tab hidden">
+                    <div class="settings-card rounded-xl p-6 mb-6">
+                        <h2 class="text-2xl font-semibold text-white mb-6">Privacy Settings</h2>
+                        
+                        <!-- Profile Visibility -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-medium text-white mb-4">Profile Visibility</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-medium text-white">Show Profile to Classmates</h4>
+                                        <p class="text-sm" style="color: var(--text-muted);">Allow other students to see your profile</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-medium text-white">Show Online Status</h4>
+                                        <p class="text-sm" style="color: var(--text-muted);">Display when you're online</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                
+
+                            </div>
+                        </div>
+
+                        <!-- Data Sharing -->
+                        <div>
+                            <h3 class="text-lg font-medium text-white mb-4">Data Sharing</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-medium text-white">Analytics</h4>
+                                        <p class="text-sm" style="color: var(--text-muted);">Help improve the platform with usage data</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-medium text-white">Marketing Communications</h4>
+                                        <p class="text-sm" style="color: var(--text-muted);">Receive updates about new features</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Language & Region Settings -->
+                <div id="language-tab" class="settings-tab hidden">
+                    <div class="settings-card rounded-xl p-6 mb-6">
+                        <h2 class="text-2xl font-semibold text-white mb-6">Language & Region</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">Language</label>
+                                <select class="form-input w-full px-4 py-3 rounded-lg focus:outline-none">
+                                    <option value="en">English</option>
+                                    <option value="es">Español</option>
+                                    <option value="fr">Français</option>
+                                    <option value="de">Deutsch</option>
+                                    <option value="zh">中文</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">Time Zone</label>
+                                <select class="form-input w-full px-4 py-3 rounded-lg focus:outline-none">
+                                    <option value="EST">Eastern Time (EST)</option>
+                                    <option value="CST">Central Time (CST)</option>
+                                    <option value="MST">Mountain Time (MST)</option>
+                                    <option value="PST">Pacific Time (PST)</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">Date Format</label>
+                                <select class="form-input w-full px-4 py-3 rounded-lg focus:outline-none">
+                                    <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                    <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                    <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">Time Format</label>
+                                <select class="form-input w-full px-4 py-3 rounded-lg focus:outline-none">
+                                    <option value="12">12-hour (AM/PM)</option>
+                                    <option value="24">24-hour</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Management Settings -->
+                <div id="data-tab" class="settings-tab hidden">
+                    <div class="settings-card rounded-xl p-6 mb-6">
+                        <h2 class="text-2xl font-semibold text-white mb-6">Data Management</h2>
+                        
+                        <!-- Export Data -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-medium text-white mb-4">Export Your Data</h3>
+                            <p class="text-sm mb-4" style="color: var(--text-muted);">Download a copy of your academic records, grades, and profile information.</p>
+                            <button style="background: var(--secondary);" class="hover:opacity-90 text-white px-6 py-3 rounded-lg font-medium transition-all">
+                                Export Data
+                            </button>
+                        </div>
+
+                        <!-- Clear Cache -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-medium text-white mb-4">Clear Cache</h3>
+                            <p class="text-sm mb-4" style="color: var(--text-muted);">Clear stored data to free up space and resolve performance issues.</p>
+                            <button style="background: var(--warning);" class="hover:opacity-90 text-white px-6 py-3 rounded-lg font-medium transition-all">
+                                Clear Cache
+                            </button>
+                        </div>
+
+                        <!-- Delete Account -->
+                        <div class="border-t pt-8" style="border-color: var(--border);">
+                            <h3 class="text-lg font-medium text-white mb-4">Delete Account</h3>
+                            <p class="text-sm mb-4" style="color: var(--text-muted);">Permanently delete your account and all associated data. This action cannot be undone.</p>
+                            <button onclick="confirmDeleteAccount()" style="background: var(--error);" class="hover:opacity-90 text-white px-6 py-3 rounded-lg font-medium transition-all">
+                                Delete Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.settings-tab').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function selectColor(color) {
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            
+            // Update CSS custom property
+            document.documentElement.style.setProperty('--primary', color);
+            
+            showNotification('Accent color updated!', 'success');
+        }
+
+        function uploadPhoto() {
+            // Simulate file upload
+            showNotification('Photo upload feature coming soon!', 'info');
+        }
+
+        function removePhoto() {
+            document.getElementById('avatarInitials').textContent = 'JS';
+            showNotification('Profile photo removed', 'success');
+        }
+
+        function saveProfile() {
+            // Simulate saving profile
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            
+            // Update avatar initials
+            document.getElementById('avatarInitials').textContent = 
+                firstName.charAt(0) + lastName.charAt(0);
+            
+            showNotification('Profile updated successfully!', 'success');
+        }
+
+        function confirmDeleteAccount() {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone and will permanently remove all your data.')) {
+                showNotification('Account deletion initiated. You will receive a confirmation email.', 'warning');
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white font-medium z-50 transition-all transform translate-x-full`;
+            
+            const bgColor = type === 'success' ? 'var(--success)' : 
+                           type === 'error' ? 'var(--error)' : 
+                           type === 'warning' ? 'var(--warning)' :
+                           'var(--secondary)';
+            notification.style.background = bgColor;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize settings page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default values and initialize components
+            console.log('Settings page initialized');
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ac7210f5d187d9',t:'MTc1OTgzMDExNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

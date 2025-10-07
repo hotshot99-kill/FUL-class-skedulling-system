@@ -1,0 +1,943 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Student Dashboard - EduScheduler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --primary: #8b5cf6;
+      --primary-dark: #7c3aed;
+      --secondary: #06b6d4;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --surface: #0f0f23;
+      --surface-light: #1a1a2e;
+      --surface-card: #16213e;
+      --text: #ffffff;
+      --text-muted: #a1a1aa;
+      --border: #374151;
+      --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--surface);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Animated Background */
+    .animated-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(-45deg, #0f0f23, #1a1a2e, #16213e, #0f0f23);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      z-index: -2;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Layout */
+    .dashboard-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(139, 92, 246, 0.2);
+      padding: 2rem 0;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar.mobile-hidden {
+      transform: translateX(-100%);
+    }
+
+    .sidebar-header {
+      padding: 0 2rem 2rem;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-menu {
+      list-style: none;
+      padding: 0 1rem;
+    }
+
+    .nav-item {
+      margin-bottom: 0.5rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: 15px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background: rgba(139, 92, 246, 0.2);
+      color: var(--primary);
+      transform: translateX(5px);
+    }
+
+    .nav-icon {
+      font-size: 1.2rem;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 2rem;
+      transition: margin-left 0.3s ease;
+    }
+
+    .main-content.sidebar-collapsed {
+      margin-left: 0;
+    }
+
+    /* Header */
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .welcome-section h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .welcome-section p {
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: rgba(139, 92, 246, 0.2);
+      border: none;
+      color: var(--primary);
+      padding: 0.75rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.75rem 1rem;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .user-profile:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: white;
+    }
+
+    .user-info h3 {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .user-info p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 20px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient-1);
+    }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      background: rgba(139, 92, 246, 0.2);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Dashboard Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Cards */
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 20px;
+      padding: 2rem;
+      height: fit-content;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .card-action {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+    }
+
+    .card-action:hover {
+      color: var(--primary-dark);
+    }
+
+    /* Schedule */
+    .schedule-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .schedule-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(5px);
+    }
+
+    .schedule-time {
+      background: var(--gradient-1);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .schedule-details h4 {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .schedule-details p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Locations */
+    .location-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .location-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .location-info h4 {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .location-info p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .location-status {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .status-available {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--success);
+    }
+
+    .status-busy {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--error);
+    }
+
+    .status-maintenance {
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--warning);
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 15px;
+      color: var(--text);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .action-btn:hover {
+      background: rgba(139, 92, 246, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+    }
+
+    .action-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--gradient-1);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .action-text h4 {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .action-text p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Custom Scrollbar */
+    body::-webkit-scrollbar,
+    .sidebar::-webkit-scrollbar,
+    .main-content::-webkit-scrollbar {
+      width: 10px;
+      background: #16213e; /* matches --surface-card */
+    }
+
+    body::-webkit-scrollbar-thumb,
+    .sidebar::-webkit-scrollbar-thumb,
+    .main-content::-webkit-scrollbar-thumb {
+      background: #1a1a2e; /* matches --surface-light */
+      border-radius: 8px;
+      border: 2px solid #16213e;
+    }
+
+    body::-webkit-scrollbar-track,
+    .sidebar::-webkit-scrollbar-track,
+    .main-content::-webkit-scrollbar-track {
+      background: #0f0f23; /* matches --surface */
+    }
+
+    /* For Firefox */
+    body,
+    .sidebar,
+    .main-content {
+      scrollbar-width: thin;
+      scrollbar-color: #1a1a2e #0f0f23;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.mobile-visible {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .main-content {
+        padding: 1rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .user-profile {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    /* Animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 0.6s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card:nth-child(1) { animation-delay: 0.1s; }
+    .card:nth-child(2) { animation-delay: 0.2s; }
+    .card:nth-child(3) { animation-delay: 0.3s; }
+    .card:nth-child(4) { animation-delay: 0.4s; }
+  </style>
+</head>
+<body>
+  <div class="animated-bg"></div>
+
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="#" class="logo">
+          <div class="logo-icon">🎓</div>
+          <div class="logo-text">EduScheduler</div>
+        </a>
+      </div>
+
+      <nav>
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <a href="#" class="nav-link active">
+              <span class="nav-icon">📊</span>
+              Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="schdule_page.html" class="nav-link">
+              <span class="nav-icon">📅</span>
+              Schedule
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="student_course.html" class="nav-link">
+              <span class="nav-icon">📚</span>
+              Courses
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="locations.html" class="nav-link">
+              <span class="nav-icon">📍</span>
+              Locations
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="calender.html" class="nav-link">
+              <span class="nav-icon">🗓️</span>
+              Calendar
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="notification.html" class="nav-link">
+              <span class="nav-icon">🔔</span>
+              Notifications
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="settings.html" class="nav-link">
+              <span class="nav-icon">⚙️</span>
+              Settings
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="student_signin.html" class="nav-link">
+              <span class="nav-icon">🚪</span>
+              Logout
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+      <!-- Header -->
+      <header class="dashboard-header">
+        <div class="welcome-section">
+          <h1>Welcome back, John! 👋</h1>
+          <p>Here's what's happening with your studies today</p>
+        </div>
+        <div class="header-actions">
+          <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+          <div class="user-profile" onclick="showProfile()">
+            <div class="user-avatar">JD</div>
+            <div class="user-info">
+              <h3>John Doe</h3>
+              <p>Computer Science</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card fade-in">
+          <div class="stat-header">
+            <div class="stat-icon">📚</div>
+          </div>
+          <div class="stat-value">6</div>
+          <div class="stat-label">Active Courses</div>
+        </div>
+        <div class="stat-card fade-in">
+          <div class="stat-header">
+            <div class="stat-icon">📍</div>
+          </div>
+          <div class="stat-value">8</div>
+          <div class="stat-label">Campus Locations</div>
+        </div>
+        <div class="stat-card fade-in">
+          <div class="stat-header">
+            <div class="stat-icon">🏢</div>
+          </div>
+          <div class="stat-value">4</div>
+          <div class="stat-label">Buildings Visited</div>
+        </div>
+        <div class="stat-card fade-in">
+          <div class="stat-header">
+            <div class="stat-icon">⏰</div>
+          </div>
+          <div class="stat-value">24</div>
+          <div class="stat-label">Hours This Week</div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <a href="#" class="action-btn" onclick="quickAction('add-course')">
+          <div class="action-icon">➕</div>
+          <div class="action-text">
+            <h4>Add Course</h4>
+            <p>Register for new courses</p>
+          </div>
+        </a>
+        <a href="#" class="action-btn" onclick="quickAction('view-schedule')">
+          <div class="action-icon">📅</div>
+          <div class="action-text">
+            <h4>View Schedule</h4>
+            <p>Check today's classes</p>
+          </div>
+        </a>
+        <a href="#" class="action-btn" onclick="quickAction('find-location')">
+          <div class="action-icon">🗺️</div>
+          <div class="action-text">
+            <h4>Find Location</h4>
+            <p>Navigate campus</p>
+          </div>
+        </a>
+        <a href="#" class="action-btn" onclick="quickAction('book-room')">
+          <div class="action-icon">🏢</div>
+          <div class="action-text">
+            <h4>Book Room</h4>
+            <p>Reserve study space</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Dashboard Grid -->
+      <div class="dashboard-grid">
+        <!-- Today's Schedule -->
+        <div class="card fade-in">
+          <div class="card-header">
+            <h3 class="card-title">Today's Schedule</h3>
+            <a href="#" class="card-action" onclick="viewFullSchedule()">View All</a>
+          </div>
+          <div class="schedule-list">
+            <div class="schedule-item">
+              <div class="schedule-time">9:00 AM</div>
+              <div class="schedule-details">
+                <h4>Data Structures & Algorithms</h4>
+                <p>Room 301, Prof. Smith</p>
+              </div>
+            </div>
+            <div class="schedule-item">
+              <div class="schedule-time">11:00 AM</div>
+              <div class="schedule-details">
+                <h4>Database Systems</h4>
+                <p>Lab 205, Prof. Johnson</p>
+              </div>
+            </div>
+            <div class="schedule-item">
+              <div class="schedule-time">2:00 PM</div>
+              <div class="schedule-details">
+                <h4>Software Engineering</h4>
+                <p>Room 402, Prof. Williams</p>
+              </div>
+            </div>
+            <div class="schedule-item">
+              <div class="schedule-time">4:00 PM</div>
+              <div class="schedule-details">
+                <h4>Computer Networks</h4>
+                <p>Room 203, Prof. Brown</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campus Locations -->
+        <div class="card fade-in">
+          <div class="card-header">
+            <h3 class="card-title">Campus Locations</h3>
+            <a href="#" class="card-action" onclick="viewAllLocations()">View Map</a>
+          </div>
+          <div class="locations-list">
+            <div class="location-item">
+              <div class="location-info">
+                <h4>Computer Science Building</h4>
+                <p>Building A - Rooms 301, 205, 402</p>
+              </div>
+              <span class="location-status status-available">Available</span>
+            </div>
+            <div class="location-item">
+              <div class="location-info">
+                <h4>Main Library</h4>
+                <p>Building B - Study halls & resources</p>
+              </div>
+              <span class="location-status status-available">Available</span>
+            </div>
+            <div class="location-item">
+              <div class="location-info">
+                <h4>Engineering Lab</h4>
+                <p>Building C - Lab 203</p>
+              </div>
+              <span class="location-status status-busy">Occupied</span>
+            </div>
+            <div class="location-item">
+              <div class="location-info">
+                <h4>Student Center</h4>
+                <p>Building D - Cafeteria & lounge</p>
+              </div>
+              <span class="location-status status-available">Available</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize dashboard
+      initializeDashboard();
+    });
+
+    function initializeDashboard() {
+      // Add fade-in animation to elements
+      const elements = document.querySelectorAll('.fade-in');
+      elements.forEach((el, index) => {
+        el.style.animationDelay = `${index * 0.1}s`;
+      });
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const mainContent = document.getElementById('mainContent');
+      
+      sidebar.classList.toggle('mobile-visible');
+    }
+
+    function showSection(section) {
+      // Update active nav link
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      // Show notification for section change
+      showNotification(`Navigating to ${section.charAt(0).toUpperCase() + section.slice(1)}...`);
+    }
+
+    function showProfile() {
+      showNotification('Opening profile settings...');
+    }
+
+    function quickAction(action) {
+      const actions = {
+        'add-course': 'Opening course registration...',
+        'view-schedule': 'Loading your schedule...',
+        'find-location': 'Opening campus map...',
+        'book-room': 'Opening room booking system...'
+      };
+      
+      showNotification(actions[action] || 'Processing request...');
+    }
+
+    function viewFullSchedule() {
+      showNotification('Loading full schedule view...');
+    }
+
+    function viewAllLocations() {
+      showNotification('Opening interactive campus map...');
+    }
+
+    function logout() {
+      showNotification('Logging out...', 'warning');
+      setTimeout(() => {
+        window.location.href = '#login';
+      }, 2000);
+    }
+
+    function showNotification(message, type = 'success') {
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        background: ${type === 'warning' ? 'var(--gradient-2)' : 'var(--gradient-1)'};
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+        z-index: 1001;
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        max-width: 300px;
+      `;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+
+      // Animate in
+      setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+      }, 100);
+
+      // Animate out and remove
+      setTimeout(() => {
+        notification.style.transform = 'translateX(400px)';
+        setTimeout(() => {
+          if (document.body.contains(notification)) {
+            document.body.removeChild(notification);
+          }
+        }, 300);
+      }, 3000);
+    }
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', (e) => {
+      const sidebar = document.getElementById('sidebar');
+      const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+      
+      if (window.innerWidth <= 768 && 
+          !sidebar.contains(e.target) && 
+          !mobileMenuBtn.contains(e.target) &&
+          sidebar.classList.contains('mobile-visible')) {
+        sidebar.classList.remove('mobile-visible');
+      }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      const sidebar = document.getElementById('sidebar');
+      if (window.innerWidth > 768) {
+        sidebar.classList.remove('mobile-visible');
+      }
+    });
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98aa9a57d545ef31',t:'MTc1OTgxMDc5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

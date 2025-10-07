@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Locations - Federal University Lokoja</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-dark: #7c3aed;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --surface: #0f0f23;
+            --surface-light: #1a1a2e;
+            --surface-card: #16213e;
+            --text: #ffffff;
+            --text-muted: #a1a1aa;
+            --border: #374151;
+        }
+
+        body {
+            box-sizing: border-box;
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .gradient-bg {
+            background: var(--gradient-1);
+        }
+
+        .gradient-text {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+        }
+
+        .building-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .building-card:hover {
+            background: var(--surface-light);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .search-input {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="gradient-bg shadow-2xl">
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold text-white mb-2">Campus Locations</h1>
+                <p class="text-blue-100 text-lg">Federal University Lokoja - Felele Campus</p>
+                <div class="mt-4 flex items-center justify-center gap-2 text-blue-100">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span>Felele, Lokoja, Kogi State, Nigeria</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Search and Filter Section -->
+        <div class="building-card rounded-xl p-6 mb-8">
+            <div class="flex flex-col md:flex-row gap-4 items-center">
+                <div class="flex-1">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Search for buildings, departments, or facilities..."
+                            class="search-input w-full px-4 py-3 pl-12 rounded-lg focus:outline-none focus:ring-0"
+                        >
+                        <svg class="absolute left-4 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <select id="categoryFilter" class="search-input px-4 py-3 rounded-lg focus:outline-none">
+                        <option value="">All Categories</option>
+                        <option value="academic">Academic Buildings</option>
+                        <option value="administrative">Administrative</option>
+                        <option value="residential">Residential</option>
+                        <option value="recreational">Recreational</option>
+                        <option value="services">Services</option>
+                    </select>
+                    <button onclick="resetView()" style="background: var(--primary);" class="hover:opacity-90 text-white px-6 py-3 rounded-lg font-medium transition-all">
+                        Reset View
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map and Buildings Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Map Section -->
+            <div class="lg:col-span-2">
+                <div class="building-card rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-semibold text-white">Campus Map</h2>
+                        <div class="flex gap-2">
+                            <button onclick="toggleMapType()" style="background: var(--secondary);" class="hover:opacity-90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
+                                Satellite
+                            </button>
+                            <button onclick="centerMap()" style="background: var(--accent);" class="hover:opacity-90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
+                                Center
+                            </button>
+                        </div>
+                    </div>
+                    <div id="map"></div>
+                    <div class="mt-4 text-sm" style="color: var(--text-muted);">
+                        <p>📍 Click on any pin to view building details</p>
+                        <p>🔍 Use search to quickly locate specific buildings</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buildings List -->
+            <div class="lg:col-span-1">
+                <div class="building-card rounded-xl p-6">
+                    <h2 class="text-xl font-semibold text-white mb-4">Campus Buildings</h2>
+                    <div id="buildingsList" class="space-y-3 max-h-96 overflow-y-auto">
+                        <!-- Buildings will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+            <div class="building-card rounded-xl p-6 text-center">
+                <div class="text-2xl font-bold gradient-text">15+</div>
+                <div style="color: var(--text-muted);" class="text-sm">Academic Buildings</div>
+            </div>
+            <div class="building-card rounded-xl p-6 text-center">
+                <div class="text-2xl font-bold gradient-text">8</div>
+                <div style="color: var(--text-muted);" class="text-sm">Faculties</div>
+            </div>
+            <div class="building-card rounded-xl p-6 text-center">
+                <div class="text-2xl font-bold gradient-text">12</div>
+                <div style="color: var(--text-muted);" class="text-sm">Hostels</div>
+            </div>
+            <div class="building-card rounded-xl p-6 text-center">
+                <div class="text-2xl font-bold gradient-text">200+</div>
+                <div style="color: var(--text-muted);" class="text-sm">Hectares</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Building Details Modal -->
+    <div id="buildingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="building-card rounded-xl p-6 max-w-md w-full mx-4">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-white">Building Details</h3>
+                <button onclick="closeBuildingModal()" class="text-gray-400 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="buildingModalContent">
+                <!-- Building details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Campus buildings data for Federal University Lokoja Felele Campus
+        const buildings = [
+            {
+                id: 1,
+                name: "Senate Building",
+                category: "administrative",
+                lat: 7.7956,
+                lng: 6.7352,
+                description: "Main administrative building housing the Vice-Chancellor's office and Senate chambers",
+                facilities: ["Vice-Chancellor's Office", "Registrar's Office", "Senate Chambers", "Conference Rooms"]
+            },
+            {
+                id: 2,
+                name: "Faculty of Engineering",
+                category: "academic",
+                lat: 7.7962,
+                lng: 6.7358,
+                description: "Engineering faculty building with modern laboratories and lecture halls",
+                facilities: ["Computer Lab", "Engineering Workshop", "Lecture Halls", "Faculty Offices"]
+            },
+            {
+                id: 3,
+                name: "Faculty of Science",
+                category: "academic",
+                lat: 7.7948,
+                lng: 6.7345,
+                description: "Science faculty with specialized laboratories for Physics, Chemistry, and Biology",
+                facilities: ["Physics Lab", "Chemistry Lab", "Biology Lab", "Research Centers"]
+            },
+            {
+                id: 4,
+                name: "Faculty of Arts",
+                category: "academic",
+                lat: 7.7955,
+                lng: 6.7340,
+                description: "Arts and Humanities faculty building",
+                facilities: ["Language Lab", "Lecture Theaters", "Faculty Library", "Seminar Rooms"]
+            },
+            {
+                id: 5,
+                name: "Central Library",
+                category: "academic",
+                lat: 7.7950,
+                lng: 6.7355,
+                description: "Main university library with extensive collection and digital resources",
+                facilities: ["Reading Halls", "Digital Library", "Archives", "Study Rooms"]
+            },
+            {
+                id: 6,
+                name: "Student Affairs Complex",
+                category: "administrative",
+                lat: 7.7945,
+                lng: 6.7350,
+                description: "Student services and affairs building",
+                facilities: ["Student Records", "Counseling Center", "Student Union", "Career Services"]
+            },
+            {
+                id: 7,
+                name: "Medical Center",
+                category: "services",
+                lat: 7.7940,
+                lng: 6.7345,
+                description: "Campus health facility providing medical services to students and staff",
+                facilities: ["Emergency Care", "Pharmacy", "Laboratory", "Consultation Rooms"]
+            },
+            {
+                id: 8,
+                name: "Sports Complex",
+                category: "recreational",
+                lat: 7.7965,
+                lng: 6.7365,
+                description: "Multi-purpose sports facility",
+                facilities: ["Football Field", "Basketball Court", "Tennis Court", "Gymnasium"]
+            },
+            {
+                id: 9,
+                name: "Male Hostel Block A",
+                category: "residential",
+                lat: 7.7935,
+                lng: 6.7360,
+                description: "Male student accommodation facility",
+                facilities: ["Student Rooms", "Common Areas", "Laundry", "Security Post"]
+            },
+            {
+                id: 10,
+                name: "Female Hostel Block A",
+                category: "residential",
+                lat: 7.7930,
+                lng: 6.7355,
+                description: "Female student accommodation facility",
+                facilities: ["Student Rooms", "Common Areas", "Laundry", "Security Post"]
+            },
+            {
+                id: 11,
+                name: "Cafeteria Complex",
+                category: "services",
+                lat: 7.7952,
+                lng: 6.7348,
+                description: "Main dining facility for students and staff",
+                facilities: ["Main Dining Hall", "Fast Food Court", "Staff Restaurant", "Catering Kitchen"]
+            },
+            {
+                id: 12,
+                name: "ICT Center",
+                category: "academic",
+                lat: 7.7958,
+                lng: 6.7362,
+                description: "Information and Communication Technology center",
+                facilities: ["Computer Labs", "Server Room", "Training Halls", "IT Support"]
+            }
+        ];
+
+        let map;
+        let markers = [];
+        let infoWindow;
+        let currentMapType = 'roadmap';
+
+        function initMap() {
+            // Center coordinates for Federal University Lokoja Felele Campus
+            const campusCenter = { lat: 7.7950, lng: 6.7350 };
+
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 16,
+                center: campusCenter,
+                mapTypeId: 'roadmap',
+                styles: [
+                    {
+                        "featureType": "all",
+                        "elementType": "geometry.fill",
+                        "stylers": [{"color": "#1a1a2e"}]
+                    },
+                    {
+                        "featureType": "all",
+                        "elementType": "labels.text.fill",
+                        "stylers": [{"color": "#ffffff"}]
+                    },
+                    {
+                        "featureType": "water",
+                        "elementType": "geometry.fill",
+                        "stylers": [{"color": "#0f0f23"}]
+                    }
+                ]
+            });
+
+            infoWindow = new google.maps.InfoWindow();
+
+            // Add markers for all buildings
+            buildings.forEach(building => {
+                addMarker(building);
+            });
+
+            // Populate buildings list
+            populateBuildingsList();
+        }
+
+        function addMarker(building) {
+            const marker = new google.maps.Marker({
+                position: { lat: building.lat, lng: building.lng },
+                map: map,
+                title: building.name,
+                icon: {
+                    url: getMarkerIcon(building.category),
+                    scaledSize: new google.maps.Size(40, 40)
+                }
+            });
+
+            marker.addListener('click', () => {
+                showBuildingDetails(building);
+            });
+
+            markers.push({ marker, building });
+        }
+
+        function getMarkerIcon(category) {
+            const icons = {
+                academic: 'data:image/svg+xml;base64,' + btoa(`
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                        <circle cx="20" cy="20" r="18" fill="#8b5cf6" stroke="#ffffff" stroke-width="2"/>
+                        <text x="20" y="26" text-anchor="middle" fill="white" font-size="20">🎓</text>
+                    </svg>
+                `),
+                administrative: 'data:image/svg+xml;base64,' + btoa(`
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                        <circle cx="20" cy="20" r="18" fill="#06b6d4" stroke="#ffffff" stroke-width="2"/>
+                        <text x="20" y="26" text-anchor="middle" fill="white" font-size="20">🏢</text>
+                    </svg>
+                `),
+                residential: 'data:image/svg+xml;base64,' + btoa(`
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                        <circle cx="20" cy="20" r="18" fill="#10b981" stroke="#ffffff" stroke-width="2"/>
+                        <text x="20" y="26" text-anchor="middle" fill="white" font-size="20">🏠</text>
+                    </svg>
+                `),
+                recreational: 'data:image/svg+xml;base64,' + btoa(`
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                        <circle cx="20" cy="20" r="18" fill="#f59e0b" stroke="#ffffff" stroke-width="2"/>
+                        <text x="20" y="26" text-anchor="middle" fill="white" font-size="20">⚽</text>
+                    </svg>
+                `),
+                services: 'data:image/svg+xml;base64,' + btoa(`
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                        <circle cx="20" cy="20" r="18" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>
+                        <text x="20" y="26" text-anchor="middle" fill="white" font-size="20">🏥</text>
+                    </svg>
+                `)
+            };
+            return icons[category] || icons.academic;
+        }
+
+        function populateBuildingsList() {
+            const buildingsList = document.getElementById('buildingsList');
+            buildingsList.innerHTML = buildings.map(building => `
+                <div class="building-card rounded-lg p-4 cursor-pointer" onclick="focusBuilding(${building.id})">
+                    <div class="flex items-center gap-3">
+                        <div class="text-2xl">${getCategoryEmoji(building.category)}</div>
+                        <div class="flex-1">
+                            <h3 class="font-medium text-white text-sm">${building.name}</h3>
+                            <p class="text-xs" style="color: var(--text-muted);">${getCategoryName(building.category)}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getCategoryEmoji(category) {
+            const emojis = {
+                academic: '🎓',
+                administrative: '🏢',
+                residential: '🏠',
+                recreational: '⚽',
+                services: '🏥'
+            };
+            return emojis[category] || '🏢';
+        }
+
+        function getCategoryName(category) {
+            const names = {
+                academic: 'Academic',
+                administrative: 'Administrative',
+                residential: 'Residential',
+                recreational: 'Recreational',
+                services: 'Services'
+            };
+            return names[category] || 'General';
+        }
+
+        function focusBuilding(buildingId) {
+            const building = buildings.find(b => b.id === buildingId);
+            if (building) {
+                map.setCenter({ lat: building.lat, lng: building.lng });
+                map.setZoom(18);
+                showBuildingDetails(building);
+            }
+        }
+
+        function showBuildingDetails(building) {
+            document.getElementById('buildingModalContent').innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="text-3xl">${getCategoryEmoji(building.category)}</div>
+                        <div>
+                            <h4 class="font-semibold text-white">${building.name}</h4>
+                            <p class="text-sm" style="color: var(--text-muted);">${getCategoryName(building.category)}</p>
+                        </div>
+                    </div>
+                    <p style="color: var(--text-muted);" class="text-sm">${building.description}</p>
+                    <div>
+                        <h5 class="font-medium text-white mb-2">Facilities:</h5>
+                        <div class="grid grid-cols-1 gap-1">
+                            ${building.facilities.map(facility => `
+                                <div class="flex items-center gap-2 text-sm" style="color: var(--text-muted);">
+                                    <div class="w-2 h-2 rounded-full" style="background: var(--primary);"></div>
+                                    ${facility}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <button onclick="getDirections(${building.lat}, ${building.lng})" style="background: var(--gradient-1);" class="w-full hover:opacity-90 text-white py-2 rounded-lg font-medium transition-all">
+                        Get Directions
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('buildingModal').classList.remove('hidden');
+            document.getElementById('buildingModal').classList.add('flex');
+        }
+
+        function closeBuildingModal() {
+            document.getElementById('buildingModal').classList.add('hidden');
+            document.getElementById('buildingModal').classList.remove('flex');
+        }
+
+        function getDirections(lat, lng) {
+            const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
+
+        function toggleMapType() {
+            currentMapType = currentMapType === 'roadmap' ? 'satellite' : 'roadmap';
+            map.setMapTypeId(currentMapType);
+            
+            const button = event.target;
+            button.textContent = currentMapType === 'roadmap' ? 'Satellite' : 'Roadmap';
+        }
+
+        function centerMap() {
+            map.setCenter({ lat: 7.7950, lng: 6.7350 });
+            map.setZoom(16);
+        }
+
+        function resetView() {
+            centerMap();
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = '';
+            populateBuildingsList();
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            filterBuildings(searchTerm, document.getElementById('categoryFilter').value);
+        });
+
+        document.getElementById('categoryFilter').addEventListener('change', function(e) {
+            const category = e.target.value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            filterBuildings(searchTerm, category);
+        });
+
+        function filterBuildings(searchTerm, category) {
+            const filtered = buildings.filter(building => {
+                const matchesSearch = !searchTerm || 
+                    building.name.toLowerCase().includes(searchTerm) ||
+                    building.description.toLowerCase().includes(searchTerm) ||
+                    building.facilities.some(f => f.toLowerCase().includes(searchTerm));
+                
+                const matchesCategory = !category || building.category === category;
+                
+                return matchesSearch && matchesCategory;
+            });
+
+            // Update buildings list
+            const buildingsList = document.getElementById('buildingsList');
+            buildingsList.innerHTML = filtered.map(building => `
+                <div class="building-card rounded-lg p-4 cursor-pointer" onclick="focusBuilding(${building.id})">
+                    <div class="flex items-center gap-3">
+                        <div class="text-2xl">${getCategoryEmoji(building.category)}</div>
+                        <div class="flex-1">
+                            <h3 class="font-medium text-white text-sm">${building.name}</h3>
+                            <p class="text-xs" style="color: var(--text-muted);">${getCategoryName(building.category)}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            if (filtered.length === 0) {
+                buildingsList.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="text-4xl mb-2">🔍</div>
+                        <p style="color: var(--text-muted);" class="text-sm">No buildings found</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('buildingModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeBuildingModal();
+            }
+        });
+    </script>
+
+    <!-- Google Maps API -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98aad7533797001b',t:'MTc1OTgxMzI5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
