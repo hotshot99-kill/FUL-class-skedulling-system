@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Register - EduScheduler</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles/register.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <div class="card">
+    <div class="flex justify-center mb-8">
+      <button class="tab-btn active" id="lecturerTab" onclick="showForm('lecturer')">Lecturer</button>
+      <button class="tab-btn" id="studentTab" onclick="showForm('student')">Student</button>
+    </div>
+    <!-- Lecturer Registration Form -->
+    <form id="lecturerForm" onsubmit="registerLecturer(event)">
+      <div class="form-group">
+        <label class="form-label" for="lecName">Full Name</label>
+        <input type="text" id="lecName" class="form-input" placeholder="Dr. John Smith" required>
+        <div class="validation-message" id="lecNameError"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="lecDepartment">Department</label>
+        <select id="lecDepartment" class="form-select" required>
+          <option value="">Select Department</option>
+          <option value="computer-science">Computer Science</option>
+          <option value="mathematics">Mathematics</option>
+          <option value="physics">Physics</option>
+          <option value="chemistry">Chemistry</option>
+          <option value="biology">Biology</option>
+          <option value="engineering">Engineering</option>
+          <option value="business">Business Administration</option>
+          <option value="economics">Economics</option>
+          <option value="psychology">Psychology</option>
+          <option value="english">English Literature</option>
+          <option value="history">History</option>
+          <option value="philosophy">Philosophy</option>
+          <option value="sociology">Sociology</option>
+          <option value="political-science">Political Science</option>
+          <option value="art">Fine Arts</option>
+          <option value="music">Music</option>
+          <option value="other">Other</option>
+        </select>
+        <div class="validation-message" id="lecDepartmentError"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="lecID">Lecturer ID</label>
+        <input type="text" id="lecID" class="form-input" placeholder="LEC001234" required>
+        <div class="validation-message" id="lecIDError"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="lecEmail">School Email</label>
+        <input type="email" id="lecEmail" class="form-input" placeholder="john.smith@university.edu" required>
+        <div class="validation-message" id="lecEmailError"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="lecPassword">Password</label>
+        <input type="password" id="lecPassword" class="form-input" placeholder="Create a strong password" required>
+        <div class="validation-message" id="lecPasswordError"></div>
+      </div>
+      <button type="submit" class="btn-primary">Register as Lecturer</button>
+      <div class="success-message" id="lecSuccess"></div>
+    </form>
+    <!-- Student Registration Form -->
+    <form id="studentForm" style="display:none" onsubmit="registerStudent(event)">
+      <div class="form-group">
+        <label class="form-label" for="stuName">Full Name</label>
+        <input type="text" id="stuName" class="form-input" placeholder="Jane Doe" required>
+        <div class="validation-message" id="stuNameError"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="stuDepartment">Department</label>
+        <select id="stuDepartment" class="form-select" required>
+          <option value="">Select Department</option>
+          <option value="computer-science">Computer Science</option>
+          <option value="mathematics">Mathematics</option>
+          <option value="physics">Physics</option>
+          <option value="chemistry">Chemistry</option>
+          <option value="biology">Biology</option>
+          <option value="engineering">Engineering</option>
+          <option value="business">Business Administration</option>
+          <option value="economics">Economics</option>
+          <option value="psychology">Psychology</option>
+          <option value="english">English Literature</option>
+          <option value="history">History</option>
+          <option value="philosophy">Philosophy</option>
+          <option value="sociology">Sociology</option>
+          <option value="political-science">Political Science</option>
+          <option value="art">Fine Arts</option>
+          <option value="music">Music</option>
+          <option value="other">Other</option>
+        </select>
+        <div class="validation-message" id="stuDepartmentError"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="stuID">Student ID</label>
+        <input type="text" id="stuID" class="form-input" placeholder="STU001234" required>
+        <div class="validation-message" id="stuIDError"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="stuEmail">School Email</label>
+        <input type="email" id="stuEmail" class="form-input" placeholder="jane.doe@university.edu" required>
+        <div class="validation-message" id="stuEmailError"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="stuPassword">Password</label>
+        <input type="password" id="stuPassword" c+l
+        +ass="form-input" placeholder="Create a strong password" required>
+        <div class="validation-message" id="stuPasswordError"></div>
+      </div>
+      <button type="submit" class="btn-primary">Register as Student</button>
+      <div class="success-message" id="stuSuccess"></div>
+    </form>
+  </div>
+  <script>
+    function showForm(type) {
+      document.getElementById('lecturerForm').style.display = type === 'lecturer' ? 'block' : 'none';
+      document.getElementById('studentForm').style.display = type === 'student' ? 'block' : 'none';
+      document.getElementById('lecturerTab').classList.toggle('active', type === 'lecturer');
+      document.getElementById('studentTab').classList.toggle('active', type === 'student');
+      clearMessages();
+    }
+    function clearMessages() {
+      document.querySelectorAll('.validation-message').forEach(e => { e.style.display = 'none'; });
+      document.querySelectorAll('.success-message').forEach(e => { e.style.display = 'none'; });
+    }
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+    function isSchoolEmail(email) {
+      const domains = ['.edu', '.ac.', 'university', 'college', 'school'];
+      return domains.some(domain => email.toLowerCase().includes(domain));
+    }
+    function validatePassword(password) {
+      let score = 0;
+      if (password.length >= 8) score++;
+      if (/[a-z]/.test(password)) score++;
+      if (/[A-Z]/.test(password)) score++;
+      if (/[0-9]/.test(password)) score++;
+      if (/[^A-Za-z0-9]/.test(password)) score++;
+      return score >= 3;
+    }
+    function registerLecturer(e) {
+      e.preventDefault();
+      clearMessages();
+      let valid = true;
+      const name = document.getElementById('lecName').value.trim();
+      const dept = document.getElementById('lecDepartment').value;
+      const id = document.getElementById('lecID').value.trim();
+      const email = document.getElementById('lecEmail').value.trim();
+      const password = document.getElementById('lecPassword').value;
+      if (name.length < 2) {
+        showError('lecNameError', 'Name must be at least 2 characters');
+        valid = false;
+      }
+      if (!dept) {
+        showError('lecDepartmentError', 'Select a department');
+        valid = false;
+      }
+      if (id.length < 6) {
+        showError('lecIDError', 'Lecturer ID must be at least 6 characters');
+        valid = false;
+      }
+      if (!isValidEmail(email)) {
+        showError('lecEmailError', 'Enter a valid email');
+        valid = false;
+      } else if (!isSchoolEmail(email)) {
+        showError('lecEmailError', 'Use your official school email');
+        valid = false;
+      }
+      if (!validatePassword(password)) {
+        showError('lecPasswordError', 'Password must be at least 8 characters and strong');
+        valid = false;
+      }
+      if (valid) {
+        document.getElementById('lecSuccess').textContent = 'Lecturer registered successfully!';
+        document.getElementById('lecSuccess').style.display = 'block';
+        document.getElementById('lecturerForm').reset();
+      }
+    }
+    function registerStudent(e) {
+      e.preventDefault();
+      clearMessages();
+      let valid = true;
+      const name = document.getElementById('stuName').value.trim();
+      const dept = document.getElementById('stuDepartment').value;
+      const id = document.getElementById('stuID').value.trim();
+      const email = document.getElementById('stuEmail').value.trim();
+      const password = document.getElementById('stuPassword').value;
+      if (name.length < 2) {
+        showError('stuNameError', 'Name must be at least 2 characters');
+        valid = false;
+      }
+      if (!dept) {
+        showError('stuDepartmentError', 'Select a department');
+        valid = false;
+      }
+      if (id.length < 6) {
+        showError('stuIDError', 'Student ID must be at least 6 characters');
+        valid = false;
+      }
+      if (!isValidEmail(email)) {
+        showError('stuEmailError', 'Enter a valid email');
+        valid = false;
+      } else if (!isSchoolEmail(email)) {
+        showError('stuEmailError', 'Use your official school email');
+        valid = false;
+      }
+      if (!validatePassword(password)) {
+        showError('stuPasswordError', 'Password must be at least 8 characters and strong');
+        valid = false;
+      }
+      if (valid) {
+        document.getElementById('stuSuccess').textContent = 'Student registered successfully!';
+        document.getElementById('stuSuccess').style.display = 'block';
+        document.getElementById('studentForm').reset();
+      }
+    }
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+  </script>
+</body>
+</html> 
