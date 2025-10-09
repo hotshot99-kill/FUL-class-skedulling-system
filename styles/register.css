@@ -1,0 +1,85 @@
+body {
+font-family: 'Poppins', sans-serif;
+background:  #0f0f23;
+min-height: 100vh;
+color: #fff;
+    }
+.card {
+background: rgba(255,255,255,0.08);
+border-radius: 20px;
+box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+backdrop-filter: blur(8px);
+border: 1px solid rgba(255,255,255,0.18);
+max-width: 500px;
+margin: 3rem auto;
+padding: 2rem 2.5rem;
+}
+.tab-btn {
+background: none;
+border: none;
+color: #fff;
+font-weight: 700;
+font-size: 1.1rem;
+padding: 0.75rem 2rem;
+cursor: pointer;
+transition: color 0.2s;
+}
+.tab-btn.active {
+color: #8b5cf6;
+border-bottom: 2px solid #8b5cf6;
+}
+.form-group {
+margin-bottom: 1.5rem;
+}
+.form-label {
+display: block;
+margin-bottom: 0.5rem;
+color: #a1a1aa;
+font-size: 0.95rem;
+}
+.form-input, .form-select {
+width: 100%;
+padding: 0.75rem 1rem;
+border-radius: 10px;
+border: none;
+background: rgba(255,255,255,0.12);
+color: #fff;
+font-size: 1rem;
+margin-bottom: 0.25rem;
+}
+.form-input:focus, .form-select:focus {
+outline: none;
+background: rgba(139,92,246,0.15);
+}
+.btn-primary {
+width: 100%;
+padding: 1rem;
+border-radius: 12px;
+background: linear-gradient(90deg, #8b5cf6 0%, #06b6d4 100%);
+color: #fff;
+font-weight: 700;
+font-size: 1rem;
+border: none;
+cursor: pointer;
+margin-top: 1rem;
+transition: background 0.2s;
+}
+.btn-primary:hover {
+background: linear-gradient(90deg, #764ba2 0%, #4facfe 100%);
+}
+.validation-message {
+font-size: 0.85rem;
+color: #ef4444;
+margin-top: 0.2rem;
+display: none;
+}
+.success-message {
+color: #10b981;
+font-size: 0.95rem;
+margin-top: 1rem;
+text-align: center;
+display: none;
+}
+select option{
+background:  #0f0f23;
+    }
