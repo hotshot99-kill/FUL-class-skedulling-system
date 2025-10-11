@@ -75,7 +75,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="bg-white rounded-xl shadow-md p-6 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
@@ -100,7 +100,7 @@
                         <h2 class="text-xl font-bold text-gray-900">Today's Schedule</h2>
                         <span class="text-sm text-gray-600">Monday, March 18, 2024</span>
                     </div>
-                    
+
                     <div class="space-y-4" id="todaySchedule">
                         <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded-r-lg">
                             <div class="flex items-center justify-between">
@@ -119,7 +119,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="border-l-4 border-green-500 bg-green-50 p-4 rounded-r-lg">
                             <div class="flex items-center justify-between">
                                 <div>
@@ -137,7 +137,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="border-l-4 border-purple-500 bg-purple-50 p-4 rounded-r-lg">
                             <div class="flex items-center justify-between">
                                 <div>
@@ -155,7 +155,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="border-l-4 border-orange-500 bg-orange-50 p-4 rounded-r-lg">
                             <div class="flex items-center justify-between">
                                 <div>
@@ -189,21 +189,21 @@
                             </svg>
                             <span>Schedule New Class</span>
                         </button>
-                        
 
-                        
+
+
                         <button class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center space-x-2">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
                             </svg>
                             <span>Room Availability</span>
                         </button>
-                        
-                        <button class="w-full bg-orange-600 text-white py-3 px-4 rounded-lg hover:bg-orange-700 transition-colors flex items-center justify-center space-x-2">
+
+                        <button class="w-full bg-orange-600 text-white py-3 px-4 rounded-lg hover:bg-orange-700 transition-colors flex items-center justify-center space-x-2" onclick="signOut()">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                             </svg>
-                            <span>Send Announcement</span>
+                            <span>Sign Out</span>
                         </button>
                     </div>
                 </div>
@@ -221,7 +221,7 @@
                             </div>
                             <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full">CS-502</span>
                         </div>
-                        
+
                         <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                             <div>
                                 <p class="text-sm font-medium text-gray-900">Web Development</p>
@@ -229,7 +229,7 @@
                             </div>
                             <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">CS-303</span>
                         </div>
-                        
+
                         <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                             <div>
                                 <p class="text-sm font-medium text-gray-900">Algorithms Lab</p>
@@ -246,21 +246,27 @@
     <script>
         // Add interactive functionality
         document.addEventListener('DOMContentLoaded', function() {
+            auth.onAuthStateChanged(user => {
+                if (!user) {
+                    window.location.href = 'lectural signup.html';
+                }
+            });
+
             // Add click handlers for all buttons
             const buttons = document.querySelectorAll('button');
             buttons.forEach(button => {
                 button.addEventListener('click', function(e) {
                     e.preventDefault();
-                    
+
                     // Add visual feedback
                     this.style.transform = 'scale(0.95)';
                     setTimeout(() => {
                         this.style.transform = 'scale(1)';
                     }, 150);
-                    
+
                     // Handle different button actions
                     const buttonText = this.textContent.trim();
-                    
+
                     if (buttonText.includes('Set Class')) {
                         showNotification('Class has been set successfully!', 'success');
                     } else if (buttonText.includes('Schedule')) {
@@ -274,18 +280,18 @@
                     }
                 });
             });
-            
+
             // Notification system
             function showNotification(message, type = 'info') {
                 const notification = document.createElement('div');
                 notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg text-white fade-in ${
-                    type === 'success' ? 'bg-green-500' : 
+                    type === 'success' ? 'bg-green-500' :
                     type === 'error' ? 'bg-red-500' : 'bg-blue-500'
                 }`;
                 notification.textContent = message;
-                
+
                 document.body.appendChild(notification);
-                
+
                 setTimeout(() => {
                     notification.style.opacity = '0';
                     setTimeout(() => {
@@ -293,39 +299,42 @@
                     }, 300);
                 }, 3000);
             }
-            
+
             // Auto-update time display
             function updateTime() {
                 const now = new Date();
-                const timeString = now.toLocaleTimeString('en-US', { 
-                    hour12: true, 
-                    hour: 'numeric', 
-                    minute: '2-digit' 
+                const timeString = now.toLocaleTimeString('en-US', {
+                    hour12: true,
+                    hour: 'numeric',
+                    minute: '2-digit'
                 });
-                
+
                 // Update any time displays if needed
                 const timeElements = document.querySelectorAll('.current-time');
                 timeElements.forEach(el => {
                     el.textContent = timeString;
                 });
             }
-            
+
             // Update time every minute
             updateTime();
             setInterval(updateTime, 60000);
-            
+
             // Add hover effects to cards
             const cards = document.querySelectorAll('.card-hover');
             cards.forEach(card => {
                 card.addEventListener('mouseenter', function() {
                     this.style.transform = 'translateY(-2px)';
                 });
-                
+
                 card.addEventListener('mouseleave', function() {
                     this.style.transform = 'translateY(0)';
                 });
             });
         });
     </script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+  <script src="auth.js"></script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ac6b79c184d388',t:'MTc1OTgyOTg0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
